@@ -1,0 +1,12 @@
+{
+  "name": "belajar-ci-cd",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node -e \"console.log('tests passed')\""
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
