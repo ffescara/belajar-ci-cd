@@ -56,66 +56,66 @@ jobs:
             pm2 reload ecosystem.config.cjs --only belajar-ci-cd-dev || pm2 start ecosystem.config.cjs --only belajar-ci-cd-dev
             pm2 save
 
-  deploy-staging:
-    needs: deploy-dev
-    runs-on: ubuntu-latest
-    environment: staging
-    steps:
-      - name: Deploy to STAGING over SSH
-        uses: appleboy/ssh-action@v1.1.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          # port: ${{ secrets.SSH_PORT }}
-          script: |
-            set -e
+  # deploy-staging:
+  #   needs: deploy-dev
+  #   runs-on: ubuntu-latest
+  #   environment: staging
+  #   steps:
+  #     - name: Deploy to STAGING over SSH
+  #       uses: appleboy/ssh-action@v1.1.0
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.SSH_USER }}
+  #         key: ${{ secrets.SSH_KEY }}
+  #         # port: ${{ secrets.SSH_PORT }}
+  #         script: |
+  #           set -e
 
-            echo "Deploying STAGING from main branch"
+  #           echo "Deploying STAGING from main branch"
 
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm use 24
+  #           export NVM_DIR="$HOME/.nvm"
+  #           [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+  #           nvm use 24
 
-            cd ${{ secrets.APP_DIR }}
+  #           cd ${{ secrets.APP_DIR }}
 
-            git fetch --all
-            git reset --hard origin/main
+  #           git fetch --all
+  #           git reset --hard origin/main
 
-            npm ci --omit=dev
+  #           npm ci --omit=dev
 
-            pm2 reload ecosystem.config.cjs --only belajar-ci-cd-staging || pm2 start ecosystem.config.cjs --only belajar-ci-cd-staging
-            pm2 save
+  #           pm2 reload ecosystem.config.cjs --only belajar-ci-cd-staging || pm2 start ecosystem.config.cjs --only belajar-ci-cd-staging
+  #           pm2 save
 
-  deploy-production:
-    needs: deploy-staging
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: http://your-production-url.example.com
-    steps:
-      - name: Deploy to PRODUCTION over SSH
-        uses: appleboy/ssh-action@v1.1.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          # port: ${{ secrets.SSH_PORT }}
-          script: |
-            set -e
+  # deploy-production:
+  #   needs: deploy-staging
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: production
+  #     url: http://your-production-url.example.com
+  #   steps:
+  #     - name: Deploy to PRODUCTION over SSH
+  #       uses: appleboy/ssh-action@v1.1.0
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.SSH_USER }}
+  #         key: ${{ secrets.SSH_KEY }}
+  #         # port: ${{ secrets.SSH_PORT }}
+  #         script: |
+  #           set -e
 
-            echo "Deploying PRODUCTION from main branch"
+  #           echo "Deploying PRODUCTION from main branch"
 
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm use 24
+  #           export NVM_DIR="$HOME/.nvm"
+  #           [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+  #           nvm use 24
 
-            cd ${{ secrets.APP_DIR }}
+  #           cd ${{ secrets.APP_DIR }}
 
-            git fetch --all
-            git reset --hard origin/main
+  #           git fetch --all
+  #           git reset --hard origin/main
 
-            npm ci --omit=dev
+  #           npm ci --omit=dev
 
-            pm2 reload ecosystem.config.cjs --only belajar-ci-cd-prod || pm2 start ecosystem.config.cjs --only belajar-ci-cd-prod
-            pm2 save
+  #           pm2 reload ecosystem.config.cjs --only belajar-ci-cd-prod || pm2 start ecosystem.config.cjs --only belajar-ci-cd-prod
+  #           pm2 save
