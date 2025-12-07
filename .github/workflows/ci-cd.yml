@@ -15,7 +15,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Install dependencies
         run: npm ci
@@ -34,13 +34,25 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          # port: ${{ secrets.SSH_PORT }}   # kalau pakai port custom, tambahkan baris ini
           script: |
             set -e
-            cd ${{ secrets.APP_DIR }}
+
             echo "Deploying DEV from main branch"
+
+            # 👉 load nvm & pakai Node 24
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm use 24
+
+            cd ${{ secrets.APP_DIR }}
+
             git fetch --all
             git reset --hard origin/main
-            npm install --only=production
+
+            # install deps untuk production
+            npm ci --omit=dev
+
             pm2 reload ecosystem.config.cjs --only belajar-ci-cd-dev || pm2 start ecosystem.config.cjs --only belajar-ci-cd-dev
             pm2 save
 
@@ -55,13 +67,23 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          # port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            cd ${{ secrets.APP_DIR }}
+
             echo "Deploying STAGING from main branch"
+
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm use 24
+
+            cd ${{ secrets.APP_DIR }}
+
             git fetch --all
             git reset --hard origin/main
-            npm install --only=production
+
+            npm ci --omit=dev
+
             pm2 reload ecosystem.config.cjs --only belajar-ci-cd-staging || pm2 start ecosystem.config.cjs --only belajar-ci-cd-staging
             pm2 save
 
@@ -78,12 +100,22 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          # port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            cd ${{ secrets.APP_DIR }}
+
             echo "Deploying PRODUCTION from main branch"
+
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm use 24
+
+            cd ${{ secrets.APP_DIR }}
+
             git fetch --all
             git reset --hard origin/main
-            npm install --only=production
+
+            npm ci --omit=dev
+
             pm2 reload ecosystem.config.cjs --only belajar-ci-cd-prod || pm2 start ecosystem.config.cjs --only belajar-ci-cd-prod
             pm2 save
